@@ -47,6 +47,15 @@
         .stat-card { transition: transform .15s ease, box-shadow .15s ease; }
         /* Menyamakan sudut membulat kartu putih di halaman lain agar senada dengan dashboard */
         #content-container .bg-white.rounded { border-radius: 0.75rem !important; }
+
+        /* NAVIGASI BAWAH UNTUK MOBILE */
+        .mobile-nav-item { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #94a3b8; background: none; border: none; font-family: inherit; }
+        .mobile-nav-item i { font-size: 18px; }
+        .mobile-nav-item span { font-size: 10.5px; font-weight: 600; }
+        .mobile-nav-item.active { color: #2563eb; }
+        #mobile-more-sheet { transform: translateY(100%); transition: transform 0.25s ease; }
+        #mobile-more-sheet.open { transform: translateY(0); }
+        #mobile-more-list button { transition: background-color .15s; }
         .stat-card:hover { transform: translateY(-2px); }
         
         @media print {
@@ -77,8 +86,8 @@
     <!-- WRAPPER UTAMA -->
     <div id="app-wrapper">
         <!-- VIEW: LOGIN -->
-        <div id="login-view" class="w-full h-full flex items-center justify-center bg-login absolute inset-0 z-50">
-            <div class="bg-white p-8 rounded-xl shadow-2xl w-96 text-center">
+        <div id="login-view" class="w-full h-full flex items-center justify-center bg-login absolute inset-0 z-50 px-4">
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-sm text-center">
                 <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600 text-3xl">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
@@ -111,7 +120,7 @@
         <div id="main-app-view" class="w-full h-full flex hidden">
             
             <!-- SIDEBAR -->
-            <div id="app-sidebar" class="w-64 bg-white text-gray-600 flex flex-col h-full shrink-0 border-r border-gray-100">
+            <div id="app-sidebar" class="hidden md:flex w-64 bg-white text-gray-600 flex-col h-full shrink-0 border-r border-gray-100">
                 <div class="p-5 flex items-center gap-3 border-b border-gray-100">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-lg shadow-md shadow-blue-200 shrink-0">
                         <i class="fa-solid fa-graduation-cap"></i>
@@ -177,7 +186,7 @@
             <!-- CONTENT AREA -->
             <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-50">
                 <!-- Header Topbar -->
-                <div id="app-header" class="h-16 bg-white border-b flex items-center justify-between px-6 shrink-0 gap-4">
+                <div id="app-header" class="h-16 bg-white border-b flex items-center justify-between px-4 md:px-6 shrink-0 gap-3 md:gap-4">
                     <h2 id="page-title" class="text-xl font-bold text-gray-800 whitespace-nowrap shrink-0">Dashboard</h2>
 
                     <div class="flex-1 max-w-md hidden md:block">
@@ -207,7 +216,7 @@
                 </div>
 
                 <!-- Main Content Scrollable -->
-                <div class="flex-1 overflow-auto p-6" id="content-container">
+                <div class="flex-1 overflow-auto p-4 md:p-6 pb-24 md:pb-6" id="content-container">
                     
                     <!-- PAGE: DASHBOARD -->
                     <div id="view-dashboard" class="page-view">
@@ -647,6 +656,45 @@
 
                 </div>
             </div>
+
+            <!-- BOTTOM NAV MOBILE (hanya tampil di layar kecil) -->
+            <div id="mobile-bottom-nav" class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 z-40 flex items-stretch h-16 shadow-[0_-4px_14px_rgba(15,23,42,0.08)]">
+                <button class="mobile-nav-item" data-tab="dashboard" onclick="switchTab('dashboard')">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="mobile-nav-item" data-tab="jurnal" onclick="switchTab('jurnal')">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Jurnal</span>
+                </button>
+                <button class="mobile-nav-item" data-tab="absen" onclick="switchTab('absen')">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span>Absensi</span>
+                </button>
+                <button class="mobile-nav-item" data-tab="nilai" onclick="switchTab('nilai')">
+                    <i class="fa-solid fa-star"></i>
+                    <span>Nilai</span>
+                </button>
+                <button class="mobile-nav-item" data-tab="more" onclick="toggleMoreMenu()">
+                    <i class="fa-solid fa-ellipsis"></i>
+                    <span>Lainnya</span>
+                </button>
+            </div>
+
+            <!-- OVERLAY & BOTTOM SHEET "LAINNYA" (mobile) -->
+            <div id="mobile-more-overlay" class="md:hidden fixed inset-0 bg-black/40 z-50 hidden" onclick="toggleMoreMenu(true)"></div>
+            <div id="mobile-more-sheet" class="md:hidden fixed left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-2xl z-50 max-h-[75vh] overflow-y-auto">
+                <div class="flex justify-center pt-3 pb-1">
+                    <div class="w-10 h-1.5 bg-gray-200 rounded-full"></div>
+                </div>
+                <div class="px-5 pb-2 pt-1 flex items-center justify-between">
+                    <h3 class="font-bold text-gray-800">Menu Lainnya</h3>
+                    <button onclick="toggleMoreMenu(true)" class="text-gray-400 w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-times text-lg"></i></button>
+                </div>
+                <div id="mobile-more-list" class="px-3 pb-6 pt-1">
+                    <!-- Diisi oleh JS: renderMobileMoreMenu() -->
+                </div>
+            </div>
         </div>
 
         <!-- MODALS AREA -->
@@ -751,7 +799,7 @@
         <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2"></div>
         
         <div id="confirm-modal" class="fixed inset-0 bg-black/50 z-[9999] hidden items-center justify-center backdrop-blur-sm" style="display: none;">
-            <div class="bg-white p-6 rounded-xl shadow-xl w-96 text-center transform scale-95 transition-transform duration-200" id="confirm-box">
+            <div class="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-sm text-center transform scale-95 transition-transform duration-200" id="confirm-box">
                 <div class="text-4xl text-red-500 mb-4"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 <h3 class="text-xl font-bold mb-2">Konfirmasi Hapus</h3>
                 <p id="confirm-message" class="text-gray-600 mb-6">Yakin ingin menghapus data ini? Data tidak dapat dikembalikan.</p>
@@ -1193,9 +1241,59 @@
             });
         }
 
+        // ==========================================
+        // NAVIGASI BAWAH UNTUK MOBILE ("Lainnya")
+        // ==========================================
+        function toggleMoreMenu(forceClose) {
+            const overlay = document.getElementById('mobile-more-overlay');
+            const sheet = document.getElementById('mobile-more-sheet');
+            const isOpen = sheet.classList.contains('open');
+            if (forceClose || isOpen) {
+                sheet.classList.remove('open');
+                overlay.classList.add('hidden');
+            } else {
+                renderMobileMoreMenu();
+                overlay.classList.remove('hidden');
+                sheet.classList.add('open');
+            }
+        }
+
+        function renderMobileMoreMenu() {
+            const isAdmin = currentUser && currentUser.role === 'admin';
+            let items = [
+                { tab: 'rekap-absen', label: 'Rekap Absensi', icon: 'fa-clipboard-list' },
+                { tab: 'rekap-nilai', label: 'Rekap Nilai', icon: 'fa-chart-bar' }
+            ];
+            if (isAdmin) {
+                items = items.concat([
+                    { tab: 'master-kelas', label: 'Data Kelas', icon: 'fa-school' },
+                    { tab: 'master-guru', label: 'Data Guru', icon: 'fa-chalkboard-user' },
+                    { tab: 'master-siswa', label: 'Data Siswa', icon: 'fa-users' },
+                    { tab: 'master-jadwal', label: 'Jadwal Pelajaran', icon: 'fa-calendar-alt' },
+                    { tab: 'pengaturan', label: 'Pengaturan Sekolah', icon: 'fa-cog' }
+                ]);
+            }
+            let html = items.map(it => `
+                <button onclick="switchTab('${it.tab}'); toggleMoreMenu(true);" class="w-full flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-gray-50 text-gray-700 text-left">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0"><i class="fa-solid ${it.icon}"></i></div>
+                    <span class="font-medium text-sm">${it.label}</span>
+                </button>
+            `).join('');
+            html += `
+                <div class="h-px bg-gray-100 my-2"></div>
+                <button onclick="toggleMoreMenu(true); handleLogout();" class="w-full flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-red-50 text-red-600 text-left">
+                    <div class="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-right-from-bracket"></i></div>
+                    <span class="font-medium text-sm">Keluar</span>
+                </button>
+            `;
+            document.getElementById('mobile-more-list').innerHTML = html;
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.sidebar-menu-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-item').forEach(el => el.classList.remove('active'));
+            toggleMoreMenu(true);
             
             let viewId = tabId === 'dashboard' ? 'view-dashboard' : `view-${tabId}`;
             if(tabId.startsWith('master-')) viewId = `view-${tabId}`;
@@ -1204,6 +1302,13 @@
             
             const sideItem = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(el => el.getAttribute('onclick').includes(tabId));
             if(sideItem) sideItem.classList.add('active');
+
+            // Sinkronkan status aktif tombol navigasi bawah (mobile).
+            // Untuk tab yang tersembunyi di menu "Lainnya", tombol "Lainnya" yang disorot.
+            const primaryTabs = ['dashboard', 'jurnal', 'absen', 'nilai'];
+            const mobileTarget = primaryTabs.includes(tabId) ? tabId : 'more';
+            const mobileItem = document.querySelector(`.mobile-nav-item[data-tab="${mobileTarget}"]`);
+            if (mobileItem) mobileItem.classList.add('active');
 
             activeTab = tabId;
             saveSession(tabId);
