@@ -82,7 +82,7 @@
                 <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600 text-3xl">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-800 mb-2">EduDigital</h1>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">SIJURP</h1>
                 <p class="text-gray-500 mb-6 text-sm">Jurnal Mengajar & Administrasi Guru</p>
                 
                 <div id="login-error" class="hidden mb-4 bg-red-100 text-red-600 p-2 rounded text-sm"></div>
@@ -488,7 +488,7 @@
                             
                             <div class="mb-4">
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Sekolah</label>
-                                <input type="text" id="form-pengaturan-sekolah" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Contoh: SMA EduDigital">
+                                <input type="text" id="form-pengaturan-sekolah" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Contoh: SMP Negeri 6 Dumai">
                             </div>
                             
                             <div class="mb-4">
@@ -542,7 +542,7 @@
                                     <i id="rpp-logo-icon" class="fa-solid fa-graduation-cap text-5xl"></i>
                                 </div>
                                 <div class="text-center flex-1">
-                                    <h1 class="text-3xl font-bold uppercase tracking-wider" id="rpp-kop-sekolah">SMA EduDigital</h1>
+                                    <h1 class="text-3xl font-bold uppercase tracking-wider" id="rpp-kop-sekolah">SMP Negeri 6 Dumai</h1>
                                     <p class="text-md mt-1" id="rpp-alamat">Jl. Pendidikan No. 1, Kota</p>
                                 </div>
                                 <div class="w-24"></div>
@@ -554,7 +554,7 @@
                             
                             <!-- IDENTITAS -->
                             <table class="w-full mb-6 text-md font-semibold">
-                                <tr><td class="w-48 py-1">Nama Sekolah</td><td class="w-4">:</td><td id="rpp-sekolah">SMA EduDigital</td></tr>
+                                <tr><td class="w-48 py-1">Nama Sekolah</td><td class="w-4">:</td><td id="rpp-sekolah">SMP Negeri 6 Dumai</td></tr>
                                 <tr><td class="py-1">Mata Pelajaran</td><td>:</td><td id="rpp-mapel"></td></tr>
                                 <tr><td class="py-1">Kelas/Semester</td><td>:</td><td id="rpp-kelas"></td></tr>
                                 <tr><td class="py-1">Alokasi Waktu</td><td>:</td><td id="rpp-waktu">1 Pertemuan (2 JP)</td></tr>
@@ -872,7 +872,7 @@
                 { id: 'JRN01', tanggal: '2026-08-07', id_jadwal: 'J01', id_guru: 'peserta', materi: 'Aljabar Linear', tujuan: 'Siswa dapat menentukan determinan matriks', strategi: '' }
             ],
             pengaturan: [
-                { id: 'SET_1', nama_sekolah: 'SMA EduDigital', alamat_sekolah: 'Jl. Pendidikan No. 1, Kota', logo_sekolah: '', kepala_sekolah: 'Dr. Budi Santoso, M.Pd', nip_kepsek: '19800101 200501 1 001', api_key_gemini: '' }
+                { id: 'SET_1', nama_sekolah: 'SMP Negeri 6 Dumai', alamat_sekolah: 'Jl. Pendidikan No. 1, Kota', logo_sekolah: '', kepala_sekolah: 'Dr. Budi Santoso, M.Pd', nip_kepsek: '19800101 200501 1 001', api_key_gemini: '' }
             ]
         };
 
@@ -1444,7 +1444,7 @@
                 return showToast("Tidak ada data untuk dicetak!", "warning");
             }
             
-            let pengaturan = DB.pengaturan && DB.pengaturan.length > 0 ? DB.pengaturan[0] : { nama_sekolah: 'SMA EduDigital', alamat_sekolah: 'Jl. Pendidikan No. 1, Kota', logo_sekolah: '' };
+            let pengaturan = DB.pengaturan && DB.pengaturan.length > 0 ? DB.pengaturan[0] : { nama_sekolah: 'SMP Negeri 6 Dumai', alamat_sekolah: 'Jl. Pendidikan No. 1, Kota', logo_sekolah: '' };
             let logoHTML = pengaturan.logo_sekolah ? `<img src="${pengaturan.logo_sekolah}" style="max-height: 80px;">` : `<div style="font-size: 40px; margin-top: 15px;">🎓</div>`;
             
             // Suntikkan Kop Surat ke Cetak Rekap Absen & Nilai
@@ -1581,7 +1581,7 @@
                 nmguru = g ? g.nama : jurnal.id_guru;
             }
 
-            let pengaturan = DB.pengaturan && DB.pengaturan.length > 0 ? DB.pengaturan[0] : { nama_sekolah: 'SMA EduDigital', kepala_sekolah: 'Admin Sekolah', nip_kepsek: '-', alamat_sekolah: 'Jl. Pendidikan No. 1, Kota', logo_sekolah: '' };
+            let pengaturan = DB.pengaturan && DB.pengaturan.length > 0 ? DB.pengaturan[0] : { nama_sekolah: 'SMP Negeri 6 Dumai', kepala_sekolah: 'Admin Sekolah', nip_kepsek: '-', alamat_sekolah: 'Jl. Pendidikan No. 1, Kota', logo_sekolah: '' };
             
             document.getElementById('rpp-kop-sekolah').innerText = pengaturan.nama_sekolah;
             document.getElementById('rpp-alamat').innerText = pengaturan.alamat_sekolah || 'Jl. Pendidikan No. 1, Kota';
