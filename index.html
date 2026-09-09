@@ -776,6 +776,79 @@
         // STATE APLIKASI
         let currentUser = null;
         let activeTab = 'dashboard';
+
+        // ==========================================
+        // MANAJEMEN SESI (agar refresh tidak selalu kembali ke login,
+        // dan otomatis logout jika tidak ada aktivitas selama 10 menit)
+        // ==========================================
+        const SESSION_KEY = 'edudigital_session';
+        const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 menit
+        let inactivityTimer = null;
+        let lastActivityWrite = 0;
+
+        function saveSession(tab) {
+            if (!currentUser) return;
+            localStorage.setItem(SESSION_KEY, JSON.stringify({
+                user: currentUser,
+                activeTab: tab || activeTab,
+                lastActivity: Date.now()
+            }));
+        }
+
+        function updateSessionActivity() {
+            if (!currentUser) return;
+            try {
+                const raw = localStorage.getItem(SESSION_KEY);
+                if (!raw) return;
+                const session = JSON.parse(raw);
+                session.lastActivity = Date.now();
+                localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+            } catch(e) {}
+        }
+
+        function clearSession() {
+            localStorage.removeItem(SESSION_KEY);
+        }
+
+        // Dipanggil setiap ada aktivitas (klik, ketik, scroll, gerak mouse)
+        function resetInactivityTimer() {
+            if (!currentUser) return;
+            const now = Date.now();
+            // Supaya tidak menulis ke localStorage terlalu sering, cukup tiap 5 detik
+            if (now - lastActivityWrite > 5000) {
+                lastActivityWrite = now;
+                updateSessionActivity();
+            }
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                showToast("Sesi berakhir karena tidak ada aktivitas selama 10 menit. Silakan login kembali.", "warning");
+                handleLogout();
+            }, SESSION_TIMEOUT);
+        }
+
+        function startActivityWatcher() {
+            ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evt => {
+                document.addEventListener(evt, resetInactivityTimer, { passive: true });
+            });
+        }
+
+        // Mencoba memulihkan sesi login yang tersimpan saat halaman di-refresh/dibuka ulang
+        function tryRestoreSession() {
+            const raw = localStorage.getItem(SESSION_KEY);
+            if (!raw) return;
+            try {
+                const session = JSON.parse(raw);
+                const elapsed = Date.now() - (session.lastActivity || 0);
+                if (elapsed > SESSION_TIMEOUT) {
+                    clearSession();
+                    return;
+                }
+                currentUser = session.user;
+                initApp(session.activeTab);
+            } catch(e) {
+                clearSession();
+            }
+        }
         
         // CUSTOM TOAST & CONFIRM LOGIC
         function showToast(message, type = 'info') {
@@ -884,6 +957,9 @@
                 document.getElementById('nilai-tanggal').valueAsDate = new Date();
                 document.getElementById('form-jurnal-tanggal').valueAsDate = new Date();
             }
+            // Pulihkan sesi login (jika ada & belum kedaluwarsa) supaya refresh
+            // halaman tidak selalu kembali ke halaman login.
+            tryRestoreSession();
         };
 
         function setSyncStatus(isSyncing) {
@@ -1003,13 +1079,15 @@
 
         function handleLogout() {
             currentUser = null;
+            if (inactivityTimer) { clearTimeout(inactivityTimer); inactivityTimer = null; }
+            clearSession();
             document.getElementById('login-view').classList.remove('hidden');
             document.getElementById('main-app-view').classList.add('hidden');
             document.getElementById('login-form').reset();
             document.getElementById('login-error').classList.add('hidden');
         }
 
-        async function initApp() {
+        async function initApp(tabToOpen) {
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('main-app-view').classList.remove('hidden');
             
@@ -1036,7 +1114,10 @@
             populateDropdowns();
             loadPengaturanForm();
             
-            switchTab('dashboard');
+            switchTab(tabToOpen || 'dashboard');
+            saveSession(tabToOpen || 'dashboard');
+            startActivityWatcher();
+            resetInactivityTimer();
         }
 
         async function loadAllData() {
@@ -1123,6 +1204,9 @@
             
             const sideItem = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(el => el.getAttribute('onclick').includes(tabId));
             if(sideItem) sideItem.classList.add('active');
+
+            activeTab = tabId;
+            saveSession(tabId);
 
             const titleMap = {
                 'dashboard': 'Dashboard', 'master-kelas': 'Data Kelas', 'master-guru': 'Data Guru', 'master-siswa': 'Data Siswa',
