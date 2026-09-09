@@ -13,7 +13,7 @@
     
     <style>
         /* Memaksa body/html tidak bisa di-scroll oleh blogger, karena scroll diatur di dalam app-wrapper */
-        body, html { margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; font-family: 'Inter', sans-serif !important; background-color: #f3f4f6 !important; width: 100% !important; }
+        body, html { margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; font-family: 'Inter', sans-serif !important; background-color: #f4f6fb !important; width: 100% !important; }
         
         .bg-login { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
         
@@ -36,8 +36,18 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         /* Layouting */
-        .sidebar-menu-item { padding: 10px 15px; margin: 5px 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; color: #cbd5e1; }
-        .sidebar-menu-item:hover, .sidebar-menu-item.active { background-color: #3b82f6; color: white; }
+        .sidebar-menu-item { padding: 10px 16px; margin: 3px 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; color: #64748b; font-size: 14px; font-weight: 500; display: flex; align-items: center; }
+        .sidebar-menu-item:hover { background-color: #eff6ff; color: #2563eb; }
+        .sidebar-menu-item.active { background: linear-gradient(135deg,#2563eb,#4f46e5); color: #fff; box-shadow: 0 6px 14px -4px rgba(37,99,235,0.45); }
+
+        /* Tema baru terinspirasi Online Exam Portal */
+        .hero-banner { background: linear-gradient(120deg, #1e3a8a 0%, #2563eb 55%, #4f46e5 100%); }
+        .quick-action-card { transition: transform .15s ease, box-shadow .15s ease; }
+        .quick-action-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(15,23,42,0.15); }
+        .stat-card { transition: transform .15s ease, box-shadow .15s ease; }
+        /* Menyamakan sudut membulat kartu putih di halaman lain agar senada dengan dashboard */
+        #content-container .bg-white.rounded { border-radius: 0.75rem !important; }
+        .stat-card:hover { transform: translateY(-2px); }
         
         @media print {
             body, html { overflow: visible !important; height: auto !important; }
@@ -101,20 +111,25 @@
         <div id="main-app-view" class="w-full h-full flex hidden">
             
             <!-- SIDEBAR -->
-            <div id="app-sidebar" class="w-64 bg-gray-900 text-white flex flex-col h-full shrink-0">
-                <div class="p-5 flex items-center gap-3 border-b border-gray-800">
-                    <i class="fa-solid fa-graduation-cap text-2xl text-blue-400"></i>
-                    <span class="text-xl font-bold tracking-wider">EduDigital</span>
+            <div id="app-sidebar" class="w-64 bg-white text-gray-600 flex flex-col h-full shrink-0 border-r border-gray-100">
+                <div class="p-5 flex items-center gap-3 border-b border-gray-100">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-lg shadow-md shadow-blue-200 shrink-0">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div class="leading-tight">
+                        <span class="text-lg font-extrabold text-gray-800 tracking-wide block">EduDigital</span>
+                        <span class="text-[11px] text-gray-400">Smart Teaching, Better Future</span>
+                    </div>
                 </div>
                 
                 <div class="flex-1 overflow-y-auto py-4">
-                    <p class="px-5 text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Menu Utama</p>
+                    <p class="px-5 text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Menu Utama</p>
                     <div class="sidebar-menu-item active" onclick="switchTab('dashboard')">
                         <i class="fa-solid fa-chart-pie w-6"></i> Dashboard
                     </div>
                     
                     <div id="menu-master" class="hidden">
-                        <p class="px-5 text-xs font-semibold text-gray-500 mb-2 mt-4 uppercase tracking-wider">Data Master</p>
+                        <p class="px-5 text-xs font-semibold text-gray-400 mb-2 mt-4 uppercase tracking-wider">Data Master</p>
                         <div class="sidebar-menu-item" onclick="switchTab('master-kelas')">
                             <i class="fa-solid fa-school w-6"></i> Data Kelas
                         </div>
@@ -129,7 +144,7 @@
                         </div>
                     </div>
 
-                    <p class="px-5 text-xs font-semibold text-gray-500 mb-2 mt-4 uppercase tracking-wider">Administrasi</p>
+                    <p class="px-5 text-xs font-semibold text-gray-400 mb-2 mt-4 uppercase tracking-wider">Administrasi</p>
                     <div class="sidebar-menu-item" onclick="switchTab('absen')">
                         <i class="fa-solid fa-user-check w-6"></i> Buku Absensi
                     </div>
@@ -147,33 +162,47 @@
                     </div>
                 </div>
                 
-                <div id="menu-pengaturan" class="hidden p-4">
-                    <div class="sidebar-menu-item !mx-0" onclick="switchTab('pengaturan')">
-                        <i class="fa-solid fa-cog w-6"></i> Pengaturan Sekolah
-                    </div>
-                </div>
-
-                <div class="p-4 border-t border-gray-800">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold" id="user-initial">A</div>
-                        <div>
-                            <p class="text-sm font-semibold" id="user-name-display">Admin</p>
-                            <p class="text-xs text-gray-400" id="user-role-display">Administrator</p>
+                <div class="p-3 border-t border-gray-100">
+                    <div id="menu-pengaturan" class="hidden">
+                        <div class="sidebar-menu-item" onclick="switchTab('pengaturan')">
+                            <i class="fa-solid fa-cog w-6"></i> Pengaturan Sekolah
                         </div>
                     </div>
-                    <button onclick="handleLogout()" class="w-full py-2 bg-red-600/20 text-red-400 rounded hover:bg-red-600 hover:text-white transition text-sm flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-right-from-bracket"></i> Keluar
-                    </button>
+                    <div class="sidebar-menu-item hover:!bg-red-50 hover:!text-red-600" onclick="handleLogout()">
+                        <i class="fa-solid fa-right-from-bracket w-6"></i> Keluar
+                    </div>
                 </div>
             </div>
 
             <!-- CONTENT AREA -->
             <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-50">
                 <!-- Header Topbar -->
-                <div id="app-header" class="h-16 bg-white border-b flex items-center justify-between px-6 shrink-0">
-                    <h2 id="page-title" class="text-xl font-bold text-gray-800">Dashboard</h2>
-                    <div id="sync-status" class="text-sm text-gray-500 flex items-center gap-2">
-                        <i class="fa-solid fa-cloud text-blue-500"></i> <span id="sync-text">Tersinkronisasi</span>
+                <div id="app-header" class="h-16 bg-white border-b flex items-center justify-between px-6 shrink-0 gap-4">
+                    <h2 id="page-title" class="text-xl font-bold text-gray-800 whitespace-nowrap shrink-0">Dashboard</h2>
+
+                    <div class="flex-1 max-w-md hidden md:block">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                            <input type="text" placeholder="Cari siswa, kelas, atau menu..." class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 focus:bg-white transition">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 md:gap-4 shrink-0">
+                        <div id="sync-status" class="hidden lg:flex text-sm text-gray-500 items-center gap-2">
+                            <i class="fa-solid fa-cloud text-blue-500"></i> <span id="sync-text">Tersinkronisasi</span>
+                        </div>
+                        <button class="relative w-9 h-9 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 transition">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        <div class="w-px h-8 bg-gray-100 hidden sm:block"></div>
+                        <div class="flex items-center gap-3">
+                            <div class="text-right hidden sm:block leading-tight">
+                                <p class="text-sm font-semibold text-gray-800" id="user-name-display">Admin</p>
+                                <p class="text-xs text-gray-400" id="user-role-display">Administrator</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-white shrink-0" id="user-initial">A</div>
+                        </div>
                     </div>
                 </div>
 
@@ -182,30 +211,96 @@
                     
                     <!-- PAGE: DASHBOARD -->
                     <div id="view-dashboard" class="page-view">
+
+                        <!-- HERO WELCOME BANNER -->
+                        <div class="hero-banner relative overflow-hidden rounded-2xl p-6 md:p-8 mb-6 text-white shadow-lg shadow-blue-200/50">
+                            <div class="relative z-10 max-w-lg">
+                                <p class="text-blue-100 text-sm mb-1">Selamat Datang Kembali,</p>
+                                <h1 class="text-2xl md:text-3xl font-extrabold mb-2" id="dash-welcome-name">Halo, Guru! 👋</h1>
+                                <p class="text-blue-100 text-sm mb-5">Siap mengajar hari ini? Cek jadwal dan lengkapi jurnal mengajarmu.</p>
+                                <button onclick="resetAndOpenModal('modal-jurnal')" class="bg-white text-blue-700 font-semibold text-sm px-5 py-2.5 rounded-lg shadow hover:bg-blue-50 transition inline-flex items-center gap-2">
+                                    <i class="fa-solid fa-pen"></i> Isi Jurnal Baru
+                                </button>
+                            </div>
+                            <i class="fa-solid fa-chalkboard-user absolute right-6 bottom-0 text-9xl text-white/10 hidden md:block"></i>
+                        </div>
+
+                        <!-- QUICK ACTIONS -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div class="quick-action-card bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                                <div class="w-11 h-11 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-lg mb-3"><i class="fa-solid fa-book-open"></i></div>
+                                <p class="font-semibold text-gray-800 text-sm mb-2">Jurnal Mengajar</p>
+                                <button onclick="switchTab('jurnal')" class="text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition rounded-lg px-3 py-1.5 w-full">Isi Sekarang</button>
+                            </div>
+                            <div class="quick-action-card bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                                <div class="w-11 h-11 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-lg mb-3"><i class="fa-solid fa-user-check"></i></div>
+                                <p class="font-semibold text-gray-800 text-sm mb-2">Buku Absensi</p>
+                                <button onclick="switchTab('absen')" class="text-xs font-semibold text-white bg-green-600 hover:bg-green-700 transition rounded-lg px-3 py-1.5 w-full">Buka</button>
+                            </div>
+                            <div class="quick-action-card bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                                <div class="w-11 h-11 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-lg mb-3"><i class="fa-solid fa-star"></i></div>
+                                <p class="font-semibold text-gray-800 text-sm mb-2">Buku Nilai</p>
+                                <button onclick="switchTab('nilai')" class="text-xs font-semibold text-white bg-purple-600 hover:bg-purple-700 transition rounded-lg px-3 py-1.5 w-full">Input Nilai</button>
+                            </div>
+                            <div class="quick-action-card bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                                <div class="w-11 h-11 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center text-lg mb-3"><i class="fa-solid fa-chart-bar"></i></div>
+                                <p class="font-semibold text-gray-800 text-sm mb-2">Rekap Nilai</p>
+                                <button onclick="switchTab('rekap-nilai')" class="text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 transition rounded-lg px-3 py-1.5 w-full">Lihat Rekap</button>
+                            </div>
+                        </div>
+
+                        <!-- STAT CARDS -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
                                 <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-2xl"><i class="fa-solid fa-users"></i></div>
                                 <div><p class="text-gray-500 text-sm">Total Siswa</p><h3 class="text-2xl font-bold text-gray-800" id="dash-tot-siswa">0</h3></div>
                             </div>
-                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
                                 <div class="w-14 h-14 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-2xl"><i class="fa-solid fa-school"></i></div>
                                 <div><p class="text-gray-500 text-sm">Total Kelas</p><h3 class="text-2xl font-bold text-gray-800" id="dash-tot-kelas">0</h3></div>
                             </div>
-                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div class="stat-card bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
                                 <div class="w-14 h-14 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-2xl"><i class="fa-solid fa-book"></i></div>
                                 <div><p class="text-gray-500 text-sm">Jurnal Terisi</p><h3 class="text-2xl font-bold text-gray-800" id="dash-tot-jurnal">0</h3></div>
                             </div>
                         </div>
-                        
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Jadwal Mengajar Anda Hari Ini</h3>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse">
-                                    <thead><tr class="bg-gray-50 text-gray-600 text-sm"><th class="p-3 border-b">Jam</th><th class="p-3 border-b">Mata Pelajaran</th><th class="p-3 border-b">Kelas</th></tr></thead>
-                                    <tbody id="dash-jadwal-table">
-                                        <!-- Injected by JS -->
-                                    </tbody>
-                                </table>
+
+                        <!-- MAIN CONTENT GRID -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                                <div class="flex items-center justify-between mb-4 border-b pb-2">
+                                    <h3 class="font-bold text-gray-800">Jadwal Mengajar Anda Hari Ini</h3>
+                                    <i class="fa-solid fa-calendar-day text-blue-500"></i>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead><tr class="bg-gray-50 text-gray-600 text-sm"><th class="p-3 border-b rounded-l-lg">Jam</th><th class="p-3 border-b">Mata Pelajaran</th><th class="p-3 border-b rounded-r-lg">Kelas</th></tr></thead>
+                                        <tbody id="dash-jadwal-table">
+                                            <!-- Injected by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                                <div class="flex items-center justify-between mb-4 border-b pb-2">
+                                    <h3 class="font-bold text-gray-800">Pengumuman</h3>
+                                    <i class="fa-solid fa-bullhorn text-orange-500"></i>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="p-3 rounded-lg bg-blue-50 border border-blue-100">
+                                        <p class="text-sm font-semibold text-blue-800">Lengkapi Jurnal Mengajar</p>
+                                        <p class="text-xs text-blue-600 mt-1">Pastikan jurnal harian terisi setiap selesai mengajar agar rekap tetap akurat.</p>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-green-50 border border-green-100">
+                                        <p class="text-sm font-semibold text-green-800">Input Absensi Tepat Waktu</p>
+                                        <p class="text-xs text-green-600 mt-1">Rekap absensi bulanan akan lebih rapi jika diisi setiap hari.</p>
+                                    </div>
+                                    <div class="p-3 rounded-lg bg-purple-50 border border-purple-100">
+                                        <p class="text-sm font-semibold text-purple-800">Cek Rekap Nilai</p>
+                                        <p class="text-xs text-purple-600 mt-1">Tinjau perkembangan nilai siswa secara berkala di menu Rekap Nilai.</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -922,6 +1017,8 @@
             document.getElementById('user-name-display').innerText = currentUser.nama;
             document.getElementById('user-role-display').innerText = currentUser.role.toUpperCase();
             document.getElementById('user-initial').innerText = currentUser.nama.charAt(0).toUpperCase();
+            const welcomeEl = document.getElementById('dash-welcome-name');
+            if (welcomeEl) welcomeEl.innerText = 'Halo, ' + currentUser.nama + ' 👋';
 
             // Setup Role Access
             if (currentUser.role === 'admin') {
@@ -1840,5 +1937,3 @@ Gunakan format ini (PASTIKAN struktur JSON valid tanpa terpotong, berikan uraian
     </script>
 </body>
 </html>
-
-
