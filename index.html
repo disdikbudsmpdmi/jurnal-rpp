@@ -1166,7 +1166,7 @@
             } else {
                 myJadwal.forEach(j => {
                     const kls = DB.kelas.find(k => k.id === j.id_kelas);
-                    tbody += `<tr class="border-b"><td class="p-3">${j.mulai} - ${j.selesai}</td><td class="p-3 font-semibold text-blue-600">${j.mapel}</td><td class="p-3">${kls ? kls.nama : '-'}</td></tr>`;
+                    tbody += `<tr class="border-b"><td class="p-3">${formatWaktu(j.mulai)} - ${formatWaktu(j.selesai)}</td><td class="p-3 font-semibold text-blue-600">${j.mapel}</td><td class="p-3">${kls ? kls.nama : '-'}</td></tr>`;
                 });
             }
             document.getElementById('dash-jadwal-table').innerHTML = tbody;
@@ -1222,6 +1222,24 @@
             document.getElementById('table-siswa').innerHTML = tbody || '<tr><td colspan="5" class="text-center p-3">Data kosong</td></tr>';
         }
 
+        // Membersihkan & memformat nilai waktu dari Spreadsheet.
+        // Google Sheets kadang menyimpan sel "Waktu" sebagai objek Date dengan
+        // tanggal basis 1899-12-30, sehingga saat dibaca ulang oleh backend nilainya
+        // bisa berubah jadi teks tanggal seperti "1899-12-30" (jam hilang).
+        function formatWaktu(v) {
+            if (!v) return '-';
+            let s = String(v).replace(/^'/, ''); // buang tanda kutip pemaksa teks jika ada
+            let m = s.match(/^(\d{2}):(\d{2})/); // sudah bersih, misal "07:00" atau "07:00:00"
+            if (m) return m[1] + ':' + m[2];
+            m = s.match(/T(\d{2}):(\d{2})/); // format ISO datetime, misal "...T07:00:00.000Z"
+            if (m) return m[1] + ':' + m[2];
+            const d = new Date(s);
+            if (!isNaN(d.getTime()) && /\d{2}:\d{2}:\d{2}/.test(s)) {
+                return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+            }
+            return '-'; // data lama yang jam-nya sudah hilang, perlu diedit ulang
+        }
+
         function renderTableJadwal() {
             let tbody = '';
             DB.jadwal.forEach(j => {
@@ -1229,7 +1247,7 @@
                 const guru = DB.users.find(u => u.username === j.id_guru);
                 
                 tbody += `<tr class="border-b hover:bg-gray-50">
-                    <td class="p-3 font-semibold">${j.hari}</td><td class="p-3">${j.mulai} - ${j.selesai}</td><td class="p-3">${j.mapel}</td>
+                    <td class="p-3 font-semibold">${j.hari}</td><td class="p-3">${formatWaktu(j.mulai)} - ${formatWaktu(j.selesai)}</td><td class="p-3">${j.mapel}</td>
                     <td class="p-3">${kls ? kls.nama : j.id_kelas}</td><td class="p-3 font-semibold text-blue-600">${guru ? guru.nama : j.id_guru}</td>
                     <td class="p-3 text-center">
                         <button onclick="editData('jadwal', '${j.id}')" class="text-blue-500 hover:text-blue-700 mr-4" title="Edit Data"><i class="fa-solid fa-edit text-lg"></i></button>
@@ -1715,8 +1733,10 @@
                 if(data) {
                     document.getElementById('form-jadwal-id').value = data.id;
                     document.getElementById('form-jadwal-hari').value = data.hari;
-                    document.getElementById('form-jadwal-mulai').value = data.mulai;
-                    document.getElementById('form-jadwal-selesai').value = data.selesai;
+                    const jamMulai = formatWaktu(data.mulai);
+                    const jamSelesai = formatWaktu(data.selesai);
+                    document.getElementById('form-jadwal-mulai').value = jamMulai === '-' ? '' : jamMulai;
+                    document.getElementById('form-jadwal-selesai').value = jamSelesai === '-' ? '' : jamSelesai;
                     document.getElementById('form-jadwal-mapel').value = data.mapel;
                     document.getElementById('form-jadwal-idkelas').value = data.id_kelas;
                     document.getElementById('form-jadwal-idguru').value = data.id_guru;
@@ -1755,8 +1775,10 @@
                 payloadData = {
                     id: document.getElementById('form-jadwal-id').value || `J${Math.floor(Math.random()*1000)}`,
                     hari: document.getElementById('form-jadwal-hari').value,
-                    mulai: document.getElementById('form-jadwal-mulai').value,
-                    selesai: document.getElementById('form-jadwal-selesai').value,
+                    // Diberi awalan tanda kutip agar Google Sheets menyimpannya sebagai TEKS,
+                    // bukan tipe Waktu/Tanggal, supaya jam tidak berubah jadi "1899-12-30" lagi.
+                    mulai: "'" + document.getElementById('form-jadwal-mulai').value,
+                    selesai: "'" + document.getElementById('form-jadwal-selesai').value,
                     mapel: document.getElementById('form-jadwal-mapel').value,
                     id_kelas: document.getElementById('form-jadwal-idkelas').value,
                     id_guru: document.getElementById('form-jadwal-idguru').value
